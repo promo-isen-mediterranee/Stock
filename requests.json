@@ -1,0 +1,12 @@
+{
+  "POST /items": {
+    "name": "Règles",
+    "quantity": 4000,
+    "address": "Place Georges Pompidou",
+    "city": "Toulon",
+    "room": "457"
+  },
+  "PUT /items/1/3": {
+    "quantity": 3888
+  }
+}
