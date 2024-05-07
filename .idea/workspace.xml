@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="be520a80-b959-4ada-bb2c-a6597d0e8259" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../.idea/LogistISEN.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-    </list>
+    <list default="true" id="be520a80-b959-4ada-bb2c-a6597d0e8259" name="Changes" comment="Base commit" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -16,18 +13,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "Rakushain"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Rakushain&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/promo-isen-mediterranee/Stock.git",
-    "accountId": "dd2898cf-d911-491f-ae45-6ff8a09df03b"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/promo-isen-mediterranee/Stock.git&quot;,
+    &quot;accountId&quot;: &quot;dd2898cf-d911-491f-ae45-6ff8a09df03b&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 0
 }</component>
@@ -41,6 +38,7 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/Marc ETAVARD/Desktop/Moa/ISEN/MASTER_1/LogistISEN/Stock",
     "node.js.detected.package.eslint": "true",
@@ -72,6 +70,7 @@
       <workItem from="1714683358967" duration="563000" />
       <workItem from="1714728677480" duration="18140000" />
       <workItem from="1714923632411" duration="297000" />
+      <workItem from="1714923952123" duration="424000" />
     </task>
     <servers />
   </component>
@@ -88,5 +87,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Base commit" />
+    <option name="LAST_COMMIT_MESSAGE" value="Base commit" />
   </component>
 </project>

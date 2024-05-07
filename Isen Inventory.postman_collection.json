@@ -1,0 +1,496 @@
+{
+	"info": {
+		"_postman_id": "7738cbc9-650c-4d06-82cd-d3470a5580aa",
+		"name": "Isen Inventory",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27369359"
+	},
+	"item": [
+		{
+			"name": "events",
+			"item": [
+				{
+					"name": "http://127.0.0.1:5000/event/create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text",
+								"id": 9,
+								"uuid": "ab74b813-108e-4dea-a768-f041d971c9f4"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "Salon Studyrama 2",
+									"type": "text"
+								},
+								{
+									"key": "stand_size",
+									"value": "45",
+									"type": "text"
+								},
+								{
+									"key": "contact_objective",
+									"value": "50",
+									"type": "text"
+								},
+								{
+									"key": "location.address",
+									"value": "Palais Neptune",
+									"type": "text"
+								},
+								{
+									"key": "location.city",
+									"value": "Toulon",
+									"type": "text"
+								},
+								{
+									"key": "location.room",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "item_manager.last_name",
+									"value": "A",
+									"type": "text"
+								},
+								{
+									"key": "item_manager.first_name",
+									"value": "Definir",
+									"type": "text"
+								},
+								{
+									"key": "date_start",
+									"value": "2024-5-20",
+									"type": "text"
+								},
+								{
+									"key": "date_end",
+									"value": "2024-5-20",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/event/create",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"event",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:5000/event/1",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text",
+								"id": 9,
+								"uuid": "74b705a0-a196-423e-9666-e825aa204b21"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "Salon Studyrama ",
+									"type": "text"
+								},
+								{
+									"key": "stand_size",
+									"value": "50",
+									"type": "text"
+								},
+								{
+									"key": "contact_objective",
+									"value": "150",
+									"type": "text"
+								},
+								{
+									"key": "location.address",
+									"value": "Palais Neptune",
+									"type": "text"
+								},
+								{
+									"key": "location.city",
+									"value": "Toulon",
+									"type": "text"
+								},
+								{
+									"key": "location.room",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "item_manager.last_name",
+									"value": "OLIVIER",
+									"type": "text"
+								},
+								{
+									"key": "item_manager.first_name",
+									"value": "Alëx",
+									"type": "text"
+								},
+								{
+									"key": "date_start",
+									"value": "2024-5-20",
+									"type": "text"
+								},
+								{
+									"key": "date_end",
+									"value": "2024-5-20",
+									"type": "text"
+								},
+								{
+									"key": "status.label",
+									"value": "Pret",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/event/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"event",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:5000/event/A faire",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/event/A faire",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"event",
+								"A faire"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:5000/event/1",
+					"request": {
+						"auth": {
+							"type": "inherit"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/event/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"event",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:5000/event/history/1",
+					"request": {
+						"auth": {
+							"type": "inherit"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/event/history/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"event",
+								"history",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:5000/event/1",
+					"request": {
+						"auth": {
+							"type": "inherit"
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text",
+								"id": 7,
+								"uuid": "2add4ac8-03e0-49b2-b009-c56d8fe5780a"
+							}
+						],
+						"url": {
+							"raw": "http://127.0.0.1:5000/event/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"event",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "stock",
+			"item": [
+				{
+					"name": "http://127.0.0.1:5000/stock/item/5",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text",
+								"id": 9,
+								"uuid": "f9da0819-2d27-40d4-b15b-8d42b2990a2e"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "Règles noires",
+									"type": "text"
+								},
+								{
+									"key": "quantity",
+									"value": "3888",
+									"type": "text"
+								},
+								{
+									"key": "category",
+									"value": "Règles",
+									"type": "text"
+								},
+								{
+									"key": "location.address",
+									"value": "Place Georges Pompidou",
+									"type": "text"
+								},
+								{
+									"key": "location.city",
+									"value": "Toulon",
+									"type": "text"
+								},
+								{
+									"key": "location.room",
+									"value": "457",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/stock/item/5/4",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"stock",
+								"item",
+								"5",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:5000/stock/item/create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text",
+								"id": 9,
+								"uuid": "7a5377e4-43e2-4653-a50d-6e0a2a1e8b24"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "Règles noires",
+									"type": "text"
+								},
+								{
+									"key": "quantity",
+									"value": "4000",
+									"type": "text"
+								},
+								{
+									"key": "category",
+									"value": "Règles",
+									"type": "text"
+								},
+								{
+									"key": "location.address",
+									"value": "Place Georges Pompidou",
+									"type": "text"
+								},
+								{
+									"key": "location.city",
+									"value": "Toulon",
+									"type": "text"
+								},
+								{
+									"key": "location.room",
+									"value": "457",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/stock/item/create",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"stock",
+								"item",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:5000/stock/item/5",
+					"request": {
+						"auth": {
+							"type": "inherit"
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/stock/item/5",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"stock",
+								"item",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:5000/stock/item/1",
+					"request": {
+						"auth": {
+							"type": "inherit"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/stock/item/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"stock",
+								"item",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
