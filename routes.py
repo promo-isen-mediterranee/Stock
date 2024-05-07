@@ -1,5 +1,5 @@
 from flask import request
-from models import Item, Event, Reserved_item, Item_location, Person, get_location_id
+from models import Item, Event, Reserved_item, Item_location, Users, get_location_id
 from app import app, db
 from sqlalchemy.sql.expression import func, text
 
@@ -101,39 +101,34 @@ def delete_item(itemId):
 @app.route('/stock/reserveItem', methods=['POST'])
 def reserve_item():
     try:
-        request_form = request.get_json()
+        request_form = request.form
 
-        ev = request_form["event"]
-
-        event_name = ev["name"]
-        date_start = ev["date_start"]
-        date_end = ev["date_end"]
-        event_location = ev["location"]
-        event_address = event_location['address']
-        city_event = event_location['city']
-        room_event = '' if 'room' not in event_location else event_location['room']
+        event_name = request_form["event.name"]
+        date_start = request_form["event.date_start"]
+        date_end = request_form["event.date_end"]
+        event_address = request_form['event.address']
+        city_event = request_form['event.city']
+        room_event = '' if 'event.room' not in request_form else request_form['event.room']
         event_location_id = get_location_id(event_address, city_event, room_event)
-        event = Event.query.filter_by(name=event_name, date_start=date_start, date_end=date_end, locationId=event_location_id)
-
-        it = request_form['item']
-        item_name = it['name']
-        item_category = it['category']
-        item = Item.query.filter_by(name=item_name, category=item_category)
+        print(event_name, date_start, date_end)
+        event = Event.query.filter_by(name=event_name, date_start=date_start, date_end=date_end, location_id=event_location_id).first()
+        item_name = request_form['item.name']
+        item = Item.query.filter_by(name=item_name).first()
 
         if not item:
-            return 'Item not found', 404
+            return 'Item introuvable', 404
         elif not event:
-            return 'Event not found', 404
+            return 'Event introuvable', 404
         
         quantity = request_form['quantity']
-        status = request_form['status']
+        status = bool(request_form['status'])
         reserved_on = func.now().op('AT TIME ZONE')(text("'Europe/Paris'"))
         # TODO -> reserved_by = user authentifié
-        reserved_by = Person.query.filter_by(last_name = "A", first_name="Definir")
+        reserved_by = Users.query.filter_by(email="definir.a@isen.yncrea.fr").first().id
 
-        reserved_item = Reserved_item(event_id=event.id, itemId=item.id, status=status,
+        reserved_item = Reserved_item(event_id=event.id, item_id=item.id, status=status,
                                       quantity=quantity, reserved_on=reserved_on, reserved_by=reserved_by)
-        
+        # TODO -> update quantity item -> quelle localisation ?
         db.session.add(reserved_item)
         db.session.commit()
 
@@ -147,8 +142,7 @@ def reserve_item():
 def unreserve_item():
     itemId = request.form.get('item')
     event_id = request.form.get('event')
-
-    reserved_item = Reserved_item.query.filter_by(itemId=itemId, event_id=event_id).first()
+    reserved_item = Reserved_item.query.filter_by(item_id=itemId, event_id=event_id).first()
 
     if not reserved_item:
         return 'Reserved item not found', 404

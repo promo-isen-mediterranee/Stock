@@ -75,8 +75,8 @@ CREATE TABLE IF NOT EXISTS event_status_history (
 
 -- Reserved item
 CREATE TABLE IF NOT EXISTS reserved_item (
-    item_id INT REFERENCES item(id) ON UPDATE CASCADE ON DELETE CASCADE,
-    event_id INT REFERENCES event(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    item_id INT REFERENCES item(id) ON UPDATE CASCADE,
+    event_id INT REFERENCES event(id) ON UPDATE CASCADE,
     quantity INT NOT NULL,
     status BOOLEAN NOT NULL,
     reserved_on TIMESTAMP NOT NULL,
@@ -102,6 +102,7 @@ INSERT INTO location (address, city, room) VALUES ('Place Georges Pompidou', 'To
 
 INSERT INTO users(email) VALUES ('marc.etavard@isen.yncrea.fr');
 INSERT INTO users(email) VALUES('alex.olivier@isen.yncrea.fr');
+INSERT INTO users(email) VALUES('definir.a@isen.yncrea.fr');
 
 INSERT INTO person(last_name, first_name) VALUES ('A', 'Definir');
 INSERT INTO person(last_name, first_name) VALUES ('ETAVARD', 'Marc');
@@ -133,8 +134,3 @@ INSERT INTO item_location(item_id, location_id, quantity) VALUES(1, 2, 100);
 INSERT INTO item_location(item_id, location_id, quantity) VALUES(2, 3, 320);
 INSERT INTO item_location(item_id, location_id, quantity) VALUES(3, 3, 20);
 INSERT INTO item_location(item_id, location_id, quantity) VALUES(4, 3, 100);
-
--- INSERT INTO reserved_item(status,quantity,reserved_on,reserved_by,event_id,item_id)
--- VALUES(True, 20, NOW()::timestamp(0), (SELECT id FROM Users WHERE email = 'marc.etavard@isen.yncrea.fr'), 1, 1)
-
-    

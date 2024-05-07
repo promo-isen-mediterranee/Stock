@@ -56,7 +56,7 @@ class Event_status(db.Model):
 class Person(db.Model):
     __tablename__ = 'person'
 
-    id = db.Column(db.UUID(as_uuid=True), primary_key=True)
+    id = db.Column(db.UUID, primary_key=True, unique=True, nullable=False, default=uuid.uuid4)
     first_name = db.Column(db.String(50))
     last_name = db.Column(db.String(50))
 
@@ -91,8 +91,8 @@ class Reserved_item(db.Model):
     reserved_by = db.Column(db.UUID, db.ForeignKey('users.id'))
 
     r_users = db.relationship(Users, backref='reserved_users', cascade="save-update")
-    r_event = db.relationship(Event, backref="reserved_event", cascade="save-update, delete")
-    r_item = db.relationship(Item, backref="reserved_item", cascade="save-update, delete")
+    r_event = db.relationship(Event, backref="reserved_event", cascade="save-update")
+    r_item = db.relationship(Item, backref="reserved_item", cascade="save-update")
 
 
 def get_location_id(address, city, room):
