@@ -27,7 +27,7 @@ def create_item():
         category = request_form['category']
         address = request_form['location.address']
         city = request_form['location.city']
-        room = request_form['location.room'] if 'location.room' else ''
+        room = request_form['location.room'] if 'location.room' in request_form else ''
 
         locationId = get_location_id(address, city, room)
         itemId = db.session.query(func.max(Item.id) + 1).first()[0]
@@ -55,7 +55,7 @@ def update_item(itemId, locationId):
         category = request_form['category']
         address = request_form['location.address']
         city = request_form['location.city']
-        room = request_form['location.room'] if 'location.room' else ''
+        room = request_form['location.room'] if 'location.room' in request_form else ''
         new_location_id = get_location_id(address, city, room)
         
         item = Item.query.get(itemId)
