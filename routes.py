@@ -129,7 +129,6 @@ def create_location():
         room = request_form['room'] if 'room' in request_form else ''
         new_id = db.session.query(func.max(Location.id) + 1).first()[0]
         location = Location(id=new_id, address=address, city=city, room=room)
-        print(location)
         db.session.add(location)
         db.session.commit()
 
@@ -246,7 +245,6 @@ def update_reserved_item(eventId, item_locationId):
 
         return 'Emplacement mis à jour', 201
     except Exception as e:
-        print(Reserved_item.query.filter_by(event_id=1, item_location_id=1).first())
         return f'Erreur lors de la mise à jour de l item réservé, {e}', 500
 
 
