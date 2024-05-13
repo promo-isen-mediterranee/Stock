@@ -120,7 +120,7 @@ VALUES('Salon étudiant Studyrama', 100, 50, NOW()::timestamptz(0), NOW()::times
        (SELECT id FROM person WHERE last_name = 'ETAVARD'),
        (SELECT id FROM location WHERE city = 'Toulon' AND room = '007'));
 INSERT INTO event(name, stand_size, contact_objective, date_start, date_end, status_id, item_manager, location_id) 
-VALUES('Salon étudiant Studyrama', 150, 75, '2024-5-11', '2024-5-14', 1,
+VALUES('Salon étudiant Studyrama', 150, 75, '2024-6-11', '2024-6-14', 1,
        (SELECT id FROM person WHERE last_name = 'OLIVIER'),
        (SELECT id FROM location WHERE city = 'Marseille'));
 
