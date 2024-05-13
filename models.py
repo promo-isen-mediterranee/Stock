@@ -11,18 +11,28 @@ class Users(db.Model):
     email = db.Column(db.String(30), nullable=False)
 
 
+class Category(db.Model):
+    __tablename__ = "category"
+
+    id = db.Column(db.Integer, primary_key=True)
+    label = db.Column(db.String(50), nullable=False)
+
+
 class Item(db.Model):
     __tablename__ = "item"
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
-    category = db.Column(db.String(50), nullable=False)
+    category_id = db.Column(db.String(50), db.ForeignKey("category.id"), nullable=False)
+
+    r_category = db.relationship(Category, backref="category", cascade="save-update")
+
 
     def json(self):
         return {
             'id': self.id,
             'name': self.name,
-            'category': self.category
+            'category_id': self.category_id
         }
 
 
@@ -33,13 +43,19 @@ class Location(db.Model):
     address = db.Column(db.String(100), nullable=False)
     city = db.Column(db.String(100), nullable=False)
     room = db.Column(db.String(10), nullable=True)
+    def json(self):
+        return {"id": self.id,
+                "address": self.address,
+                "city": self.city,
+                "room": self.room} 
 
 
 class Item_location(db.Model):
     __tablename__ = "item_location"
+    id = db.Column(db.Integer, primary_key=True)
 
-    item_id = db.Column(db.Integer, db.ForeignKey('item.id'), primary_key=True)
-    location_id = db.Column(db.Integer, db.ForeignKey('location.id'), primary_key=True)
+    item_id = db.Column(db.Integer, db.ForeignKey('item.id'))
+    location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
     quantity = db.Column(db.Integer, nullable=False)
 
     r_item = db.relationship(Item, backref="item", cascade="save-update, delete")
@@ -82,17 +98,17 @@ class Event(db.Model):
 class Reserved_item(db.Model):
     __tablename__ = "reserved_item"
 
-    event_id = db.Column(db.Integer, db.ForeignKey('event.id'), primary_key=True)
-    item_id = db.Column(db.Integer, db.ForeignKey('item.id'), primary_key=True)
+    event_id = db.Column(db.Integer, db.ForeignKey('event.id'), primary_key = True)
+    item_location_id = db.Column(db.Integer, db.ForeignKey('item_location.id'), primary_key=  True)
     status = db.Column(db.Boolean, nullable=False, default=False)
     quantity = db.Column(db.Integer, nullable=False)
-    reserved_on = db.Column(db.DateTime, nullable=False,
+    reserved_on = db.Column(db.DateTime(timezone = True), nullable=False,
                             server_default=db.func.now().op('AT TIME ZONE')(text("'Europe/Paris'")))
     reserved_by = db.Column(db.UUID, db.ForeignKey('users.id'))
 
     r_users = db.relationship(Users, backref='reserved_users', cascade="save-update")
     r_event = db.relationship(Event, backref="reserved_event", cascade="save-update")
-    r_item = db.relationship(Item, backref="reserved_item", cascade="save-update")
+    r_item_location = db.relationship(Item_location, backref="reserved_item_location", cascade="save-update")
 
 
 def get_location_id(address, city, room):
