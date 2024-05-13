@@ -201,7 +201,7 @@ def reserve_item():
         elif not event:
             return 'Event introuvable', 404
         quantity = request_form['quantity']
-        status = bool(request_form['status']) if 'status' in request_form else ''
+        status = bool(request_form['status']) if 'status' in request_form else False
         reserved_on = func.now().op('AT TIME ZONE')(text("'Europe/Paris'"))
         # TODO -> reserved_by = user authentifié
         reserved_by = Users.query.filter_by(email="definir.a@isen.yncrea.fr").first().id
@@ -228,7 +228,7 @@ def update_reserved_item(eventId, item_locationId):
         item_location = Item_location.query.filter_by(id=item_location_id).first()
 
         quantity = request_form['quantity']
-        status = bool(request_form['status']) if 'status' in request_form else ''        
+        status = bool(request_form['status']) if 'status' in request_form else False        
         
         if not event:
             return 'Event introuvable', 404
@@ -246,7 +246,8 @@ def update_reserved_item(eventId, item_locationId):
 
         return 'Emplacement mis à jour', 201
     except Exception as e:
-        return f'Erreur lors de la mise à jour de l emplacement, {e}', 500
+        print(Reserved_item.query.filter_by(event_id=1, item_location_id=1).first())
+        return f'Erreur lors de la mise à jour de l item réservé, {e}', 500
 
 
 
