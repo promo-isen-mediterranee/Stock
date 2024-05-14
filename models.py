@@ -112,8 +112,13 @@ class Reserved_item(db.Model):
 
 
 def get_location_id(address, city, room):
-    loc = Location.query.filter_by(address=address, city=city, room=room).first()
-    return loc.id
+    if empty(room):
+        loc = Location.query.filter_by(address=address, city=city).first()
+        return loc.id
+    else:
+        loc = Location.query.filter_by(address=address, city=city, room=room).first()
+        return loc.id
+
 
 def empty(str):
     if str=="" or str.isspace():
