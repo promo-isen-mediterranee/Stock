@@ -1,5 +1,5 @@
 from flask import request
-from models import Item, Event, Reserved_item, Item_location, Users, Location, Category, get_location_id
+from models import Item, Event, Reserved_item, Item_location, Users, Location, Category, get_location_id, empty
 from app import app, db
 from sqlalchemy.sql.expression import func, text
 
@@ -17,6 +17,10 @@ def create_item():
         label = request_form['category']
         address = request_form['location.address']
         city = request_form['location.city']
+
+        if empty(name) or empty(quantity) or empty(address) or empty(city):
+            return 'Erreur lors de la création de l item, informations manquantes ou érronées', 400
+             
         room = request_form['location.room'] if 'location.room' in request_form else ''
         category = Category.query.filter_by(label=label).first()
         if category is None:
@@ -66,6 +70,9 @@ def update_item(itemId, locationId):
         address = request_form['location.address']
         city = request_form['location.city']
         room = request_form['location.room'] if 'location.room' in request_form else ''
+
+        if empty(name) or empty(quantity) or empty(label) or empty(address) or empty(city):
+           return 'Erreur lors de la mise à jour de l item, informations érronées', 400 
         new_location_id = get_location_id(address, city, room)
 
         category = Category.query.filter_by(label=label).first()
@@ -126,6 +133,9 @@ def create_location():
         request_form = request.form
         address = request_form["address"]
         city = request_form["city"]
+        if empty(address) or empty(city):
+            return 'Erreur lors de la création de la localisation, informations manquantes ou érronées', 400
+        
         room = request_form['room'] if 'room' in request_form else ''
         new_id = db.session.query(func.max(Location.id) + 1).first()[0]
         location = Location(id=new_id, address=address, city=city, room=room)
@@ -153,6 +163,9 @@ def update_location(locationId):
         address = request_form["address"]
         city = request_form["city"]
         room = request_form['room'] if 'room' in request_form else ''
+        
+        if empty(address) or empty(city):
+            return 'Erreur lors de la mise à jour de la localisation, informations manquantes', 400
         
         location = Location.query.filter_by(id=locationId).first()
 
@@ -200,6 +213,10 @@ def reserve_item():
         elif not event:
             return 'Event introuvable', 404
         quantity = request_form['quantity']
+
+        if empty(event_id) or empty(item_location_id) or empty(quantity):
+            return 'Erreur lors de la réservation de l item, informations manquantes ou érronées', 400
+
         status = bool(request_form['status']) if 'status' in request_form else False
         reserved_on = func.now().op('AT TIME ZONE')(text("'Europe/Paris'"))
         # TODO -> reserved_by = user authentifié
@@ -233,6 +250,9 @@ def update_reserved_item(eventId, item_locationId):
             return 'Event introuvable', 404
         if not item_location:
             return 'Emplacement de l item introuvable', 404
+        
+        if empty(event_id) or empty(item_location_id) or empty(quantity):
+            return 'Erreur lors de la mise à jour de la réservation de l item, informations manquantes', 400
 
         reserved_item = Reserved_item.query.filter_by(event_id=eventId, item_location_id=item_locationId).first()
 

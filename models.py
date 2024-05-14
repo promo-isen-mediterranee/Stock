@@ -113,10 +113,9 @@ class Reserved_item(db.Model):
 
 def get_location_id(address, city, room):
     loc = Location.query.filter_by(address=address, city=city, room=room).first()
-    if loc is None:
-        new_loc = Location(id=db.session.query(func.max(Location.id) + 1), address=address, city=city, room=room)
-        db.session.add(new_loc)
-        db.session.commit()
-        return new_loc.id
-    else:
-        return loc.id
+    return loc.id
+
+def empty(str):
+    if str=="" or str.isspace():
+        return 1
+    return 0
