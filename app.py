@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 load_dotenv('.flaskenv')
 
