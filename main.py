@@ -4,4 +4,4 @@ from routes import *
 
 with app.app_context():
     db.create_all()
-    app.run()
+    app.run(port=5100)
