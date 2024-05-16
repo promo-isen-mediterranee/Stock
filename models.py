@@ -98,8 +98,8 @@ class Event(db.Model):
     name = db.Column(db.String(265), nullable=False)
     stand_size = db.Column(db.Integer, nullable=True)
     contact_objective = db.Column(db.Integer, nullable=False, default=100)
-    date_start = db.Column(db.DateTime, nullable=False)
-    date_end = db.Column(db.DateTime, nullable=False)
+    date_start = db.Column(db.DateTime(timezone = True), nullable=False)
+    date_end = db.Column(db.DateTime(timezone = True), nullable=False)
     status_id = db.Column(db.Integer, db.ForeignKey('event_status.id'))
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
     item_manager = db.Column(db.UUID, db.ForeignKey('person.id'))
@@ -123,15 +123,6 @@ class Reserved_item(db.Model):
     r_users = db.relationship(Users, backref='reserved_users', cascade="save-update")
     r_event = db.relationship(Event, backref="reserved_event", cascade="save-update")
     r_item_location = db.relationship(Item_location, backref="reserved_item_location", cascade="save-update")
-
-
-def get_location_id(address, city, room):
-    if empty(room):
-        loc = Location.query.filter_by(address=address, city=city).first()
-        return loc.id
-    else:
-        loc = Location.query.filter_by(address=address, city=city, room=room).first()
-        return loc.id
 
 
 def empty(str):

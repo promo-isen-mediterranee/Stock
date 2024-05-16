@@ -1,5 +1,5 @@
 from flask import request
-from models import Item, Event, Reserved_item, Item_location, Users, Location, Category, get_location_id, empty
+from models import Item, Event, Reserved_item, Item_location, Users, Location, Category, empty
 from app import app, db
 from sqlalchemy.sql.expression import func, text
 
@@ -11,7 +11,28 @@ def get_items():
         return [item.json() for item in items]
     except Exception as e:
         return f'Erreur lors de la récupération des items, {e}', 500
-    
+
+
+@app.route('/stock/category/create', methods=['POST'])
+def create_category():
+    try:
+        request_form = request.form
+        label = request_form['label']
+        category = Category.query.filter_by(label=label).first()
+        if category:
+            return 'Category déjà existante', 409
+        
+        if empty(label):
+            return 'Erreur lors de la création de la catégorie, information manquante ou érronées', 400
+        
+        categoryId = db.session.query(func.max(Category.id) + 1).first()[0]
+        new_category = Category(id=categoryId, label=label)
+        db.session.add(new_category)
+        db.session.commit()
+
+        return 'Catégorie créée', 201
+    except Exception as e:
+        return f'Erreur lors de la création de la catégorie, {e}', 500
 
 @app.route('/stock/category/getAll')
 def get_categories():
@@ -20,6 +41,51 @@ def get_categories():
         return [category.json() for category in categories]
     except Exception as e:
         return f'Erreur lors de la récupération des items, {e}', 500
+    
+
+@app.route('/stock/category/<int:categoryId>')
+def get_category(categoryId):
+    try:
+        category = Category.query.get(categoryId)
+        return category.json()
+    except Exception as e:
+        return f'Erreur lors de la récupération des items, {e}', 500
+
+
+@app.route('/stock/category/<int:categoryId>', methods=['PUT'])
+def update_category(categoryId):
+    try:
+        request_form = request.form
+        label = request_form['label']
+
+        if empty(label):
+           return 'Erreur lors de la mise à jour de la categorie, informations érronées', 400 
+
+        category = Category.query.filter_by(id=categoryId).first()
+        if category is None:
+            return "Categorie introuvable", 404
+
+        category.label = label
+        db.session.commit()
+
+        return 'Categorie mise à jour', 201
+    except Exception as e:
+            return f'Erreur lors de la mise à jour de la categorie, {e}', 500
+    
+
+@app.route('/stock/category/<int:categoryId>', methods=['DELETE'])
+def delete_category(categoryId):
+    try:
+        category = Category.query.filter_by(id=categoryId).first()
+        
+        if not category:
+            return 'Categorie introuvable', 404
+        db.session.delete(category)
+        db.session.commit()
+
+        return 'Item supprimé', 204
+    except Exception as e:
+        return f'Erreur lors de la suppression de l item, {e}', 500
 
 
 @app.route('/stock/item/create', methods=['POST'])
@@ -33,16 +99,13 @@ def create_item():
         
         quantity = int(request_form['quantity'])
         label = request_form['category']
-        address = request_form['location.address'] if 'location.address' in request_form else ''
-        city = request_form['location.city'] if 'location.city' in request_form else ''
-        room = request_form['location.room'] if 'location.room' in request_form else ''
-        category = Category.query.filter_by(label=label).first()
+        locationId = int(request_form['location.id'])
 
-        if empty(name) or empty(quantity) or empty(category):
+        if empty(name) or quantity == 0 or empty(label):
             return 'Erreur lors de la création de l item, informations manquantes ou érronées', 400
         
+        category = Category.query.filter_by(label=label).first()
         category_id = category.id
-        locationId = get_location_id(address, city, room)
         itemId = db.session.query(func.max(Item.id) + 1).first()[0]
         item = Item(id=itemId, name=name, category_id=category_id)
         item_location = Item_location(item_id=itemId,
@@ -55,11 +118,6 @@ def create_item():
 
         return 'Item créé', 201
     except Exception as e:
-        city = request_form['location.city'] if 'location.city' in request_form else ''
-        address = request_form['location.address'] if 'location.address' in request_form else ''
-        room = request_form['location.room'] if 'location.room' in request_form else ''
-        print(get_location_id(address, city, room))
-        print("AAAA")
         return f'Erreur lors de la création de l item, {e}', 500
 
 
@@ -83,13 +141,10 @@ def update_item(itemId, locationId):
         name = request_form['name']
         quantity = int(request_form['quantity'])
         label = request_form['category']
-        address = request_form['location.address']
-        city = request_form['location.city']
-        room = request_form['location.room'] if 'location.room' in request_form else ''
+        locationId = request_form['location.id']
 
-        if empty(name) or empty(quantity) or empty(label) or empty(address) or empty(city):
+        if empty(name) or quantity == 0 or empty(label):
            return 'Erreur lors de la mise à jour de l item, informations érronées', 400 
-        new_location_id = get_location_id(address, city, room)
 
         category = Category.query.filter_by(label=label).first()
         if category is None:
@@ -110,7 +165,7 @@ def update_item(itemId, locationId):
         item.name = name
         item.category_id = category_id
         item_location.quantity = quantity
-        item_location.location_id = new_location_id
+        item_location.location_id = locationId
 
         db.session.commit()
 
