@@ -4,6 +4,24 @@ from app import app, db
 from sqlalchemy.sql.expression import func, text
 
 
+@app.route('/stock/item/getAll')
+def get_items():
+    try:
+        items = Item_location.query.all()
+        return [item.json() for item in items]
+    except Exception as e:
+        return f'Erreur lors de la récupération des items, {e}', 500
+    
+
+@app.route('/stock/category/getAll')
+def get_categories():
+    try:
+        categories = Category.query.all()
+        return [category.json() for category in categories]
+    except Exception as e:
+        return f'Erreur lors de la récupération des items, {e}', 500
+
+
 @app.route('/stock/item/create', methods=['POST'])
 def create_item():
     try:
@@ -15,22 +33,15 @@ def create_item():
         
         quantity = int(request_form['quantity'])
         label = request_form['category']
-        address = request_form['location.address']
-        city = request_form['location.city']
-
-        if empty(name) or empty(quantity) or empty(address) or empty(city):
-            return 'Erreur lors de la création de l item, informations manquantes ou érronées', 400
-             
+        address = request_form['location.address'] if 'location.address' in request_form else ''
+        city = request_form['location.city'] if 'location.city' in request_form else ''
         room = request_form['location.room'] if 'location.room' in request_form else ''
         category = Category.query.filter_by(label=label).first()
-        if category is None:
-            new_category = Category(id=db.session.query(func.max(Category.id) + 1).first()[0], label=label)
-            db.session.add(new_category)
-            db.session.commit()
-            category_id = new_category.id
-        else:
-            category_id = category.id
 
+        if empty(name) or empty(quantity) or empty(category):
+            return 'Erreur lors de la création de l item, informations manquantes ou érronées', 400
+        
+        category_id = category.id
         locationId = get_location_id(address, city, room)
         itemId = db.session.query(func.max(Item.id) + 1).first()[0]
         item = Item(id=itemId, name=name, category_id=category_id)
@@ -44,6 +55,11 @@ def create_item():
 
         return 'Item créé', 201
     except Exception as e:
+        city = request_form['location.city'] if 'location.city' in request_form else ''
+        address = request_form['location.address'] if 'location.address' in request_form else ''
+        room = request_form['location.room'] if 'location.room' in request_form else ''
+        print(get_location_id(address, city, room))
+        print("AAAA")
         return f'Erreur lors de la création de l item, {e}', 500
 
 

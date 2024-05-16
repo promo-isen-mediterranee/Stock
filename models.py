@@ -17,6 +17,12 @@ class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     label = db.Column(db.String(50), nullable=False)
 
+    def json(self):
+        return {
+            'id': self.id,
+            'label': self.label
+        }
+
 
 class Item(db.Model):
     __tablename__ = "item"
@@ -32,7 +38,7 @@ class Item(db.Model):
         return {
             'id': self.id,
             'name': self.name,
-            'category_id': self.category_id
+            'category_id': self.r_category.json()
         }
 
 
@@ -60,6 +66,14 @@ class Item_location(db.Model):
 
     r_item = db.relationship(Item, backref="item", cascade="save-update, delete")
     r_location = db.relationship('Location', backref="item_location", cascade="save-update")
+
+    def json(self):
+        return {
+            'id': self.id,
+            'item_id': self.r_item.json(),
+            'location_id': self.r_location.json(),
+            'quantity': self.quantity
+        }    
 
 
 class Event_status(db.Model):
