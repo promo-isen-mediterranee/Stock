@@ -1,10 +1,12 @@
-from flask import request
+from flask import request, Blueprint
 from models import Item, Event, Reserved_item, Item_location, Users, Location, Category, empty
 from stock import app, db
 from sqlalchemy.sql.expression import func, text
 
+bp = Blueprint('routes', __name__, url_prefix='/stock')
 
-@app.route('/stock/item/getAll')
+
+@bp.route('/item/getAll')
 def get_items():
     try:
         items = Item_location.query.all()
@@ -13,7 +15,7 @@ def get_items():
         return f'Erreur lors de la récupération des items, {e}', 500
 
 
-@app.route('/stock/category/create', methods=['POST'])
+@bp.route('/category/create', methods=['POST'])
 def create_category():
     try:
         request_form = request.form
@@ -34,7 +36,7 @@ def create_category():
     except Exception as e:
         return f'Erreur lors de la création de la catégorie, {e}', 500
 
-@app.route('/stock/category/getAll')
+@bp.route('/category/getAll')
 def get_categories():
     try:
         categories = Category.query.all()
@@ -43,7 +45,7 @@ def get_categories():
         return f'Erreur lors de la récupération des items, {e}', 500
     
 
-@app.route('/stock/category/<int:categoryId>')
+@bp.route('/category/<int:categoryId>')
 def get_category(categoryId):
     try:
         category = Category.query.get(categoryId)
@@ -52,7 +54,7 @@ def get_category(categoryId):
         return f'Erreur lors de la récupération des items, {e}', 500
 
 
-@app.route('/stock/category/<int:categoryId>', methods=['PUT'])
+@bp.route('/category/<int:categoryId>', methods=['PUT'])
 def update_category(categoryId):
     try:
         request_form = request.form
@@ -73,7 +75,7 @@ def update_category(categoryId):
             return f'Erreur lors de la mise à jour de la categorie, {e}', 500
     
 
-@app.route('/stock/category/<int:categoryId>', methods=['DELETE'])
+@bp.route('/category/<int:categoryId>', methods=['DELETE'])
 def delete_category(categoryId):
     try:
         category = Category.query.filter_by(id=categoryId).first()
@@ -88,7 +90,7 @@ def delete_category(categoryId):
         return f'Erreur lors de la suppression de l item, {e}', 500
 
 
-@app.route('/stock/item/create', methods=['POST'])
+@bp.route('/item/create', methods=['POST'])
 def create_item():
     try:
         request_form = request.form
@@ -121,7 +123,7 @@ def create_item():
         return f'Erreur lors de la création de l item, {e}', 500
 
 
-@app.route('/stock/item/<int:itemId>/<int:locationId>', methods=['GET'])
+@bp.route('/item/<int:itemId>/<int:locationId>', methods=['GET'])
 def get_item(itemId, locationId):
     item = Item.query.get(itemId)
     location = Location.query.get(locationId)
@@ -133,7 +135,7 @@ def get_item(itemId, locationId):
     return {"item": item.json(), "location": location.json(), "quantity": quantity}, 200
 
 
-@app.route('/stock/item/<int:itemId>/<locationId>', methods=['PUT'])
+@bp.route('/item/<int:itemId>/<locationId>', methods=['PUT'])
 def update_item(itemId, locationId):
     try:
         request_form = request.form
@@ -174,7 +176,7 @@ def update_item(itemId, locationId):
         return f'Erreur lors de la mise à jour de l item, {e}', 500
 
 
-@app.route('/stock/item/<int:itemId>/<int:locationId>', methods=['DELETE'])
+@bp.route('/item/<int:itemId>/<int:locationId>', methods=['DELETE'])
 def delete_item(itemId, locationId):
     try:
         item_location = Item_location.query.filter_by(item_id=itemId, location_id=locationId).first()
@@ -189,7 +191,7 @@ def delete_item(itemId, locationId):
         return f'Erreur lors de la suppression de l item, {e}', 500
 
 
-@app.route('/stock/location/getAll')
+@bp.route('/location/getAll')
 def get_locations():
     try:
         locations = Location.query.all()
@@ -198,7 +200,7 @@ def get_locations():
         return f'Erreur lors de la récupération des emplacements, {e}', 500
 
 
-@app.route('/stock/location/create', methods=['POST'])
+@bp.route('/location/create', methods=['POST'])
 def create_location():
     try:
         request_form = request.form
@@ -218,7 +220,7 @@ def create_location():
        return f'Erreur lors de la création d un emplacement, {e}', 500
 
 
-@app.route('/stock/location/<int:locationId>/')
+@bp.route('/location/<int:locationId>/')
 def get_location(locationId):
     try:
         location = Location.query.get(locationId)
@@ -227,7 +229,7 @@ def get_location(locationId):
         return f'Erreur lors de la récupération d un emplacement, {e}', 500
 
 
-@app.route('/stock/location/<int:locationId>/', methods = ['PUT'])
+@bp.route('/location/<int:locationId>/', methods = ['PUT'])
 def update_location(locationId):
     try:
         request_form = request.form
@@ -254,7 +256,7 @@ def update_location(locationId):
         return f'Erreur lors de la mise à jour de l emplacement, {e}', 500
     
 
-@app.route('/stock/location/<int:locationId>', methods=['DELETE'])
+@bp.route('/location/<int:locationId>', methods=['DELETE'])
 def delete_location(locationId):
     try:
         location = Location.query.filter_by(id=locationId).first()
@@ -269,7 +271,7 @@ def delete_location(locationId):
         return f'Erreur lors de la suppression de l emplacement, {e}', 500
     
 
-@app.route('/stock/reserveItem', methods=['POST'])
+@bp.route('/reserveItem', methods=['POST'])
 def reserve_item():
     try:
         request_form = request.form
@@ -304,7 +306,7 @@ def reserve_item():
         return f'Erreur lors de la réservation de l item, {e}', 500
 
 
-@app.route('/stock/reservedItem/edit/<int:eventId>/<int:item_locationId>', methods=['PUT'])
+@bp.route('/reservedItem/edit/<int:eventId>/<int:item_locationId>', methods=['PUT'])
 def update_reserved_item(eventId, item_locationId):
     try:
         request_form = request.form
@@ -340,7 +342,7 @@ def update_reserved_item(eventId, item_locationId):
 
 
 
-@app.route('/stock/unreserveItem/<int:eventId>/<int:item_locationId>', methods=['DELETE'])
+@bp.route('/unreserveItem/<int:eventId>/<int:item_locationId>', methods=['DELETE'])
 def unreserve_item(eventId, item_locationId):
     try:
         reserved_item = Reserved_item.query.filter_by(event_id=eventId, item_location_id=item_locationId).first()
