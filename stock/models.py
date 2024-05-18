@@ -1,8 +1,8 @@
 import uuid
-from app import db
+from stock.db import get_db
 from sqlalchemy.sql.expression import func, text
 
-
+db = get_db()
 
 class Users(db.Model):
     __tablename__ = "users"
