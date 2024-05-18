@@ -20,7 +20,7 @@ def create_app(test_config=None):
         Flask: The configured Flask application instance.
     """
     app = Flask(__name__, instance_relative_config=True)
-    app.config.from_pyfile('config.py', silent=True)
+    app.config.from_pyfile('config.py', silent=False)
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
     CORS(app)
     db = SQLAlchemy(app)
@@ -28,4 +28,5 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
-
+    
+    return app

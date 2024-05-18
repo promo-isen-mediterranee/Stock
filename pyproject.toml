@@ -9,5 +9,8 @@ readme = "README.md"
 dynamic = ["version", "description"]
 dependencies = [
     "flask",
+    "flask_sqlalchemy",
+    "flask_cors",
+    "psycopg2-binary",
 ]
 requires-python = ">=3.10"
