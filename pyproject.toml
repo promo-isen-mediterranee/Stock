@@ -1,0 +1,13 @@
+[project]
+name = "stock"
+version = "1.0.0"
+authors = [{name: "IMS Promo Dev Team", email="imspromo@yncrea.fr"}]
+description = "Stock API used for Promo App"
+dependencies = [
+    "flask",
+]
+requires-python = ">=3.10"
+
+[build-system]
+requires = ["flit_core<4"]
+build-backend = "flit_core.buildapi"

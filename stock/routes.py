@@ -1,6 +1,6 @@
 from flask import request
 from models import Item, Event, Reserved_item, Item_location, Users, Location, Category, empty
-from app import app, db
+from stock import app, db
 from sqlalchemy.sql.expression import func, text
 
 
