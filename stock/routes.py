@@ -260,7 +260,12 @@ def update_location(locationId):
 def delete_location(locationId):
     try:
         location = Location.query.filter_by(id=locationId).first()
-        
+        item_loc = Item_location.query.filter_by(location_id=locationId).first()
+        event = Event.query.filter_by(location_id=locationId).first()
+        if event:
+            return 'Suppression impossible: des evenements se déroulent encore ici'
+        if item_loc:
+            return 'Suppression impossible: des objets sont encore stockés ici'
         if not location:
             return 'Localisation introuvable', 404
         db.session.delete(location)
