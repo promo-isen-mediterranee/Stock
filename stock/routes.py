@@ -98,14 +98,14 @@ def create_item():
         item = Item.query.filter_by(name=name).first()
         if item:
             return 'Item already exists', 409
-        
+
         quantity = int(request_form['quantity'])
         label = request_form['category']
         locationId = int(request_form['location.id'])
 
-        if empty(name) or quantity == 0 or empty(label):
+        if empty(name) or quantity <= 0 or empty(label):
             return 'Erreur lors de la création de l item, informations manquantes ou érronées', 400
-        
+
         category = Category.query.filter_by(label=label).first()
         category_id = category.id
         itemId = db.session.query(func.max(Item.id) + 1).first()[0]
@@ -113,7 +113,7 @@ def create_item():
         item_location = Item_location(item_id=itemId,
                                       location_id=locationId,
                                       quantity=quantity)
-        
+
         db.session.add(item)
         db.session.add(item_location)
         db.session.commit()
@@ -145,8 +145,8 @@ def update_item(itemId, locationId):
         label = request_form['category']
         locationId = request_form['location.id']
 
-        if empty(name) or quantity == 0 or empty(label):
-           return 'Erreur lors de la mise à jour de l item, informations érronées', 400 
+        if empty(name) or quantity <= 0 or empty(label):
+            return 'Erreur lors de la mise à jour de l item, informations érronées ou stock manquant', 400
 
         category = Category.query.filter_by(label=label).first()
         if category is None:
@@ -156,14 +156,13 @@ def update_item(itemId, locationId):
             category_id = new_category.id
         else:
             category_id = category.id
-        
-        item = Item.query.filter_by(id = itemId, category_id = category_id)
+
+        item = Item.query.filter_by(id=itemId)
         item_location = Item_location.query.filter_by(item_id=itemId, location_id=locationId).first()
         if not item:
             return 'Item introuvable', 404
         elif not item_location:
             return 'Localisation de l objet introuvable'
-
         item.name = name
         item.category_id = category_id
         item_location.quantity = quantity
@@ -282,7 +281,7 @@ def reserve_item():
         request_form = request.form
         event_id = request_form["eventId"]
         event = Event.query.filter_by(id=event_id).first()
-        
+
         item_location_id = request_form['item_locationId']
         item_location = Item_location.query.filter_by(id=item_location_id).first()
 
@@ -294,15 +293,17 @@ def reserve_item():
 
         if empty(event_id) or empty(item_location_id) or empty(quantity):
             return 'Erreur lors de la réservation de l item, informations manquantes ou érronées', 400
-
         status = bool(request_form['status']) if 'status' in request_form else False
         reserved_on = func.now().op('AT TIME ZONE')(text("'Europe/Paris'"))
         # TODO -> reserved_by = user authentifié
         reserved_by = Users.query.filter_by(email="definir.a@isen.yncrea.fr").first().id
 
+        check = Reserved_item.query.filter_by(event_id=event_id, item_location_id=item_location_id).first()
+        if check:
+            return 'Erreur, réservation déjà effectuée', 409
+
         reserved_item = Reserved_item(event_id=event.id, item_location_id=item_location_id, status=status,
                                       quantity=quantity, reserved_on=reserved_on, reserved_by=reserved_by)
-        # TODO -> update quantity item 
         db.session.add(reserved_item)
         db.session.commit()
 
