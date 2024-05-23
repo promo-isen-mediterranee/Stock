@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import request
 from stock.models import Item, Event, Reserved_item, Item_location, Users, Location, Category, empty
 from stock import current_app
@@ -375,8 +376,30 @@ def get_reserved_items():
 @current_app.route('/stock/reservedItem/<string:>')
 def get_reserved_items():
     try:
-        reserved_items = Reserved_item.query.all()
-        return [reserved_item.json() for reserved_item in reserved_items]
+        date_start = request.form['date_start'] if 'date_start' in request.form else ''
+        date_end = request.form['date_end'] if 'date_end' in request.form else ''
+        if not empty(date_start) and not empty(date_end):
+            date_start = datetime.strptime(date_start, '%d-%m-%Y')
+            date_end = datetime.strptime(date_end, '%d-%m-%Y')
+            reserved_items = Reserved_item.query.filter(
+                Reserved_item.reserved_on >= date_start,
+                Reserved_item.reserved_on <= date_end
+            ).all()           
+            return [reserved_item.json() for reserved_item in reserved_items]
+        elif not empty(date_start):
+            date_start = datetime.strptime(date_start, '%d-%m-%Y')
+            reserved_items = Reserved_item.query.filter(
+                Reserved_item.reserved_on >= date_start
+            ).all()           
+            return [reserved_item.json() for reserved_item in reserved_items]
+        elif not empty(date_end):
+            date_end = datetime.strptime(date_end, '%d-%m-%Y')
+            reserved_items = Reserved_item.query.filter(
+                Reserved_item.reserved_on <= date_end
+            ).all()           
+            return [reserved_item.json() for reserved_item in reserved_items]
+        else:
+            reserved_items = Reserved_item.query.all()
+            return [reserved_item.json() for reserved_item in reserved_items]
     except Exception as e:
         return f'Erreur lors de la récupération des items réservés, {e}', 500
-
