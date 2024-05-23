@@ -361,3 +361,12 @@ def unreserve_item(eventId, item_locationId):
         return 'Item unreserved', 204
     except Exception as e:
         return f'Erreur lors de la suppression de la réservation, {e}', 500
+
+
+@current_app.route('/stock/reservedItem/getAll')
+def get_reserved_items():
+    try:
+        reserved_items = Reserved_item.query.all()
+        return [reserved_item.json() for reserved_item in reserved_items]
+    except Exception as e:
+        return f'Erreur lors de la récupération des items réservés, {e}', 500

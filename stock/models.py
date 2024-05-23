@@ -8,7 +8,23 @@ class Users(db.Model):
     __tablename__ = "users"
 
     id = db.Column(db.UUID, primary_key=True, unique=True, nullable=False, default=uuid.uuid4)
-    email = db.Column(db.String(30), nullable=False)
+    username = db.Column(db.String(101), nullable=False)
+    mail = db.Column(db.String(50), nullable=False)
+    nom = db.Column(db.String(50), nullable=False)
+    prenom = db.Column(db.String(50), nullable=False)
+    is_active = db.Column(db.Boolean, nullable=False, default=True)
+    is_admin = db.Column(db.Boolean, nullable=False, default=False)
+
+    def json(self):
+        return {
+            'id': self.id,
+            'username': self.username,
+            'mail': self.mail,
+            'nom': self.nom,
+            'prenom': self.prenom,
+            'is_active': self.is_active,
+            'is_admin': self.is_admin
+        }
 
 
 class Category(db.Model):
@@ -30,6 +46,7 @@ class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     category_id = db.Column(db.String(50), db.ForeignKey("category.id"), nullable=False)
+    gain = db.Column(db.Integer, nullable = False)
 
     r_category = db.relationship(Category, backref="category", cascade="save-update")
 
@@ -116,6 +133,7 @@ class Reserved_item(db.Model):
     item_location_id = db.Column(db.Integer, db.ForeignKey('item_location.id'), primary_key=  True)
     status = db.Column(db.Boolean, nullable=False, default=False)
     quantity = db.Column(db.Integer, nullable=False)
+    quantity_ret = db.Column(db.Integer, nullable=True)
     reserved_on = db.Column(db.DateTime(timezone = True), nullable=False,
                             server_default=db.func.now().op('AT TIME ZONE')(text("'Europe/Paris'")))
     reserved_by = db.Column(db.UUID, db.ForeignKey('users.id'))
@@ -123,7 +141,18 @@ class Reserved_item(db.Model):
     r_users = db.relationship(Users, backref='reserved_users', cascade="save-update")
     r_event = db.relationship(Event, backref="reserved_event", cascade="save-update")
     r_item_location = db.relationship(Item_location, backref="reserved_item_location", cascade="save-update")
-
+    
+    def json(self):
+        return {
+            "event_id": self.r_event.json(),
+            "item_location_id": self.r_item_location.json(),
+            "status": self.status,
+            "quantity": self.quantity,
+            "quantity_ret": self.quantity_ret,
+            "reserved_on": self.reserved_on,
+            "reserved_by": self.r_users.json(),
+        }
+    
 
 def empty(str):
     if str=="" or str.isspace():
