@@ -296,7 +296,7 @@ def reserve_item():
         status = bool(request_form['status']) if 'status' in request_form else False
         reserved_on = func.now().op('AT TIME ZONE')(text("'Europe/Paris'"))
         # TODO -> reserved_by = user authentifié
-        reserved_by = Users.query.filter_by(email="definir.a@isen.yncrea.fr").first().id
+        reserved_by = Users.query.filter_by(mail="corentin.thibaud@isen.yncrea.fr").first().id
 
         check = Reserved_item.query.filter_by(event_id=event_id, item_location_id=item_location_id).first()
         if check:
@@ -370,3 +370,13 @@ def get_reserved_items():
         return [reserved_item.json() for reserved_item in reserved_items]
     except Exception as e:
         return f'Erreur lors de la récupération des items réservés, {e}', 500
+    
+
+@current_app.route('/stock/reservedItem/<string:>')
+def get_reserved_items():
+    try:
+        reserved_items = Reserved_item.query.all()
+        return [reserved_item.json() for reserved_item in reserved_items]
+    except Exception as e:
+        return f'Erreur lors de la récupération des items réservés, {e}', 500
+

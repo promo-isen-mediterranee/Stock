@@ -13,7 +13,7 @@ class Users(db.Model):
     nom = db.Column(db.String(50), nullable=False)
     prenom = db.Column(db.String(50), nullable=False)
     is_active = db.Column(db.Boolean, nullable=False, default=True)
-    is_admin = db.Column(db.Boolean, nullable=False, default=False)
+    is_authenticated = db.Column(db.Boolean, nullable=False, default=False)
 
     def json(self):
         return {
@@ -23,7 +23,7 @@ class Users(db.Model):
             'nom': self.nom,
             'prenom': self.prenom,
             'is_active': self.is_active,
-            'is_admin': self.is_admin
+            'is_admin': self.is_authenticated
         }
 
 
@@ -55,6 +55,7 @@ class Item(db.Model):
         return {
             'id': self.id,
             'name': self.name,
+            'gain': self.gain,
             'category_id': self.r_category.json()
         }
 
@@ -98,6 +99,11 @@ class Event_status(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     label = db.Column(db.String(30), nullable=False)
+    def json(self):
+        return {
+            'id': self.id,
+            'label': self.label
+        }
 
 
 class Person(db.Model):
@@ -106,6 +112,12 @@ class Person(db.Model):
     id = db.Column(db.UUID, primary_key=True, unique=True, nullable=False, default=uuid.uuid4)
     first_name = db.Column(db.String(50))
     last_name = db.Column(db.String(50))
+    def json(self):
+        return {
+            'id': self.id,
+            'first_name': self.first_name,
+            'last_name': self.last_name
+        }
 
 
 class Event(db.Model):
@@ -125,6 +137,18 @@ class Event(db.Model):
     r_loc = db.relationship(Location, backref="location", cascade="save-update")
     r_item_manager = db.relationship(Person, backref="person", cascade="save-update")
 
+    def json(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'stand_size': self.stand_size,
+            'contact_objective': self.contact_objective,
+            'date_start': self.date_start,
+            'date_end': self.date_end,
+            'status_id': self.r_stat.json(),
+            'location_id': self.r_loc.json(),
+            'item_manager': self.r_item_manager.json()
+        }
 
 class Reserved_item(db.Model):
     __tablename__ = "reserved_item"
@@ -152,7 +176,6 @@ class Reserved_item(db.Model):
             "reserved_on": self.reserved_on,
             "reserved_by": self.r_users.json(),
         }
-    
 
 def empty(str):
     if str=="" or str.isspace():
