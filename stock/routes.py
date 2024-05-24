@@ -364,7 +364,7 @@ def unreserve_item(eventId, item_locationId):
         return f'Erreur lors de la suppression de la réservation, {e}', 500
     
 
-@current_app.route('/stock/reservedItem/>')
+@current_app.route('/stock/reservedItem/getAll>')
 def get_reserved_items():
     try:
         date_start = request.form['date_start'] if 'date_start' in request.form else ''
