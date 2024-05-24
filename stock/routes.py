@@ -362,38 +362,29 @@ def unreserve_item(eventId, item_locationId):
         return 'Item unreserved', 204
     except Exception as e:
         return f'Erreur lors de la suppression de la réservation, {e}', 500
-
-
-@current_app.route('/stock/reservedItem/getAll')
-def get_reserved_items():
-    try:
-        reserved_items = Reserved_item.query.all()
-        return [reserved_item.json() for reserved_item in reserved_items]
-    except Exception as e:
-        return f'Erreur lors de la récupération des items réservés, {e}', 500
     
 
-@current_app.route('/stock/reservedItem/<string:>')
+@current_app.route('/stock/reservedItem/>')
 def get_reserved_items():
     try:
         date_start = request.form['date_start'] if 'date_start' in request.form else ''
         date_end = request.form['date_end'] if 'date_end' in request.form else ''
         if not empty(date_start) and not empty(date_end):
-            date_start = datetime.strptime(date_start, '%d-%m-%Y')
-            date_end = datetime.strptime(date_end, '%d-%m-%Y')
+            date_start = datetime.strptime(date_start, '%Y-%m-%d')
+            date_end = datetime.strptime(date_end, '%Y-%m-%d')
             reserved_items = Reserved_item.query.filter(
                 Reserved_item.reserved_on >= date_start,
                 Reserved_item.reserved_on <= date_end
             ).all()           
             return [reserved_item.json() for reserved_item in reserved_items]
         elif not empty(date_start):
-            date_start = datetime.strptime(date_start, '%d-%m-%Y')
+            date_start = datetime.strptime(date_start, '%Y-%m-%d')
             reserved_items = Reserved_item.query.filter(
                 Reserved_item.reserved_on >= date_start
             ).all()           
             return [reserved_item.json() for reserved_item in reserved_items]
         elif not empty(date_end):
-            date_end = datetime.strptime(date_end, '%d-%m-%Y')
+            date_end = datetime.strptime(date_end, '%Y-%m-%d')
             reserved_items = Reserved_item.query.filter(
                 Reserved_item.reserved_on <= date_end
             ).all()           
