@@ -1,8 +1,9 @@
 import uuid
-from database import get_db
+
+from flask import current_app
 from sqlalchemy.sql.expression import func, text
 
-db = get_db()
+db = current_app.db
 
 
 class Users(db.Model):

@@ -14,9 +14,9 @@ ENV DB_NAME=logistisen_db
 ENV SQLALCHEMY_TRACK_MODIFICATIONS=False
 
 # Flask
-ENV FLASK_APP=API_Stock/src/__init__.py
+ENV FLASK_APP=/API_Stock/src/__init__.py
 ENV FLASK_RUN_HOST=0.0.0.0
-ENV FLASK_RUN_PORT=5050
+ENV FLASK_RUN_PORT=5100
 ENV SESSION_DURATION_SECONDS=900
 
 
@@ -28,16 +28,16 @@ ENV SESSION_DURATION_SECONDS=900
 WORKDIR /API_Stock
 
 # Copie des fichiers de configuration
-COPY API_Stock/requirements.txt .
+COPY requirements.txt .
 
 # Installation des dépendances
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copie du code
-COPY API_Stock/src /API_Stock/src
+COPY ./src ./src
 
-# Expose le port 5050
-EXPOSE 5050
+# Expose le port 5100
+EXPOSE 5100
 
 # Spécifie la commande à exécuter
 CMD ["flask", "run"]

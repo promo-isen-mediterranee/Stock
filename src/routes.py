@@ -1,14 +1,14 @@
 from datetime import datetime, timedelta
 from functools import wraps
 from os import environ
-from flask import request, session, abort
+from flask import request, session, abort, current_app
 from flask_login import current_user
-from models import Item, Event, Reserved_item, Item_location, Users, Location, Category, empty, User_role, Role_permissions
-from __init__ import app, login_manager, logger
-from database import get_db
+from .models import Item, Event, Reserved_item, Item_location, Users, Location, Category, empty, User_role, Role_permissions
 from sqlalchemy.sql.expression import func, text
 
-db = get_db()
+db = current_app.db
+login_manager = current_app.login_manager
+logger = current_app.logger
 
 
 def response(obj=None, message=None, status_code=200):
@@ -51,10 +51,10 @@ def permissions_required(*permissions):
     return wrapper
 
 
-@app.before_request
+@current_app.before_request
 def make_session_permanent():
     session.permanent = True
-    app.permanent_session_lifetime = timedelta(seconds=float(environ.get('SESSION_DURATION_SECONDS')))
+    current_app.permanent_session_lifetime = timedelta(seconds=float(environ.get('SESSION_DURATION_SECONDS')))
 
 
 @login_manager.user_loader
@@ -62,62 +62,54 @@ def user_loader(userId):
     return Users.query.get(userId)
 
 
-@app.errorhandler(400)
+@current_app.errorhandler(400)
 def bad_request(e):
-    logger.exception(f'Error occurred')
     return response(message='Requête incorrecte', status_code=400)
 
 
-@app.errorhandler(401)
+@current_app.errorhandler(401)
 def unauthorized(e):
-    logger.exception(f'Error occurred')
     return response(message='Non autorisé', status_code=401)
 
 
-@app.errorhandler(403)
+@current_app.errorhandler(403)
 def forbidden(e):
-    logger.exception(f'Error occurred')
     return response(message='Accès interdit', status_code=403)
 
 
-@app.errorhandler(404)
+@current_app.errorhandler(404)
 def page_not_found(e):
-    logger.exception(f'Error occurred')
     return response(message='Resource introuvable', status_code=404)
 
 
-@app.errorhandler(405)
+@current_app.errorhandler(405)
 def method_not_allowed(e):
-    logger.exception(f'Error occurred')
     return response(message='Méthode non autorisée', status_code=405)
 
 
-@app.errorhandler(409)
+@current_app.errorhandler(409)
 def conflict(e):
-    logger.exception(f'Error occurred')
     return response(message='Conflit', status_code=409)
 
 
-@app.errorhandler(429)
+@current_app.errorhandler(429)
 def too_many_requests(e):
-    logger.exception(f'Error occurred')
     return response(message=e, status_code=429)
 
 
-@app.errorhandler(500)
+@current_app.errorhandler(500)
 def internal_server_error(e):
-    logger.exception(f'Error occurred')
     return response(message='Erreur interne du serveur', status_code=500)
 
 
-@app.get('/stock/item/getAll')
+@current_app.get('/stock/item/getAll')
 @permissions_required(5)
 def get_items():
     items = Item_location.query.all()
     return response(obj=[item.json() for item in items])
 
 
-@app.post('/stock/category/create')
+@current_app.post('/stock/category/create')
 @permissions_required(10)
 def create_category():
     request_form = request.form
@@ -138,21 +130,21 @@ def create_category():
     return response(message="Catégorie créée", status_code=201)
 
 
-@app.get('/stock/category/getAll')
+@current_app.get('/stock/category/getAll')
 @permissions_required(9)
 def get_categories():
     categories = Category.query.all()
     return response(obj=[category.json() for category in categories])
 
 
-@app.get('/stock/category/<int:categoryId>')
+@current_app.get('/stock/category/<int:categoryId>')
 @permissions_required(9)
 def get_category(categoryId):
     category = Category.query.get(categoryId)
     return response(obj=category.json())
 
 
-@app.put('/stock/category/<int:categoryId>')
+@current_app.put('/stock/category/<int:categoryId>')
 @permissions_required(10)
 def update_category(categoryId):
     request_form = request.form
@@ -171,7 +163,7 @@ def update_category(categoryId):
     return response(message="Catégorie mise à jour", status_code=201)
 
 
-@app.delete('/stock/category/<int:categoryId>')
+@current_app.delete('/stock/category/<int:categoryId>')
 @permissions_required(10)
 def delete_category(categoryId):
     category = Category.query.filter_by(id=categoryId).first()
@@ -184,7 +176,7 @@ def delete_category(categoryId):
     return response(message="Item supprimé", status_code=204)
 
 
-@app.post('/stock/item/create')
+@current_app.post('/stock/item/create')
 @permissions_required(6)
 def create_item():
     request_form = request.form
@@ -215,7 +207,7 @@ def create_item():
     return response(message="Item créé", status_code=201)
 
 
-@app.get('/stock/item/<int:itemId>/<int:locationId>')
+@current_app.get('/stock/item/<int:itemId>/<int:locationId>')
 @permissions_required(5)
 def get_item(itemId, locationId):
     item = Item.query.get(itemId)
@@ -226,7 +218,7 @@ def get_item(itemId, locationId):
     return response(obj={"item": item.json(), "location": location.json(), "quantity": quantity})
 
 
-@app.put('/stock/item/<int:itemId>/<locationId>')
+@current_app.put('/stock/item/<int:itemId>/<locationId>')
 @permissions_required(6)
 def update_item(itemId, locationId):
     request_form = request.form
@@ -262,7 +254,7 @@ def update_item(itemId, locationId):
     return response(message='Item mis à jour', status_code=201)
 
 
-@app.delete('/stock/item/<int:itemId>/<int:locationId>')
+@current_app.delete('/stock/item/<int:itemId>/<int:locationId>')
 @permissions_required(6)
 def delete_item(itemId, locationId):
     item_location = Item_location.query.filter_by(item_id=itemId, location_id=locationId).first()
@@ -275,14 +267,14 @@ def delete_item(itemId, locationId):
     return response(message='Item supprimé', status_code=204)
 
 
-@app.get('/stock/location/getAll')
+@current_app.get('/stock/location/getAll')
 @permissions_required(7)
 def get_locations():
     locations = Location.query.all()
     return response(obj=[location.json() for location in locations])
 
 
-@app.post('/stock/location/create')
+@current_app.post('/stock/location/create')
 @permissions_required(8)
 def create_location():
     request_form = request.form
@@ -300,14 +292,14 @@ def create_location():
     return response(message='Emplacement créé', status_code=203)
 
 
-@app.get('/stock/location/<int:locationId>/')
+@current_app.get('/stock/location/<int:locationId>/')
 @permissions_required(7)
 def get_location(locationId):
     location = Location.query.get(locationId)
     return response(obj=location.json())
 
 
-@app.put('/stock/location/<int:locationId>/')
+@current_app.put('/stock/location/<int:locationId>/')
 @permissions_required(8)
 def update_location(locationId):
     request_form = request.form
@@ -332,7 +324,7 @@ def update_location(locationId):
     return response(message='Emplacement mis à jour', status_code=201)
 
 
-@app.delete('/stock/location/<int:locationId>')
+@current_app.delete('/stock/location/<int:locationId>')
 @permissions_required(8)
 def delete_location(locationId):
     location = Location.query.filter_by(id=locationId).first()
@@ -348,7 +340,7 @@ def delete_location(locationId):
     return response(message='Emplacement supprimé', status_code=204)
 
 
-@app.post('/stock/reserveItem')
+@current_app.post('/stock/reserveItem')
 @permissions_required(11)
 def reserve_item():
     request_form = request.form
@@ -381,7 +373,7 @@ def reserve_item():
     return response(message='Item réservé', status_code=201)
 
 
-@app.put('/stock/reservedItem/edit/<int:eventId>/<int:item_locationId>')
+@current_app.put('/stock/reservedItem/edit/<int:eventId>/<int:item_locationId>')
 @permissions_required(11)
 def update_reserved_item(eventId, item_locationId):
     request_form = request.form
@@ -412,7 +404,7 @@ def update_reserved_item(eventId, item_locationId):
     return response(message='Emplacement mis à jour', status_code=201)
 
 
-@app.delete('/stock/unreserveItem/<int:eventId>/<int:item_locationId>')
+@current_app.delete('/stock/unreserveItem/<int:eventId>/<int:item_locationId>')
 @permissions_required(11)
 def unreserve_item(eventId, item_locationId):
     reserved_item = Reserved_item.query.filter_by(event_id=eventId, item_location_id=item_locationId).first()
@@ -425,7 +417,7 @@ def unreserve_item(eventId, item_locationId):
     return response(message='Item unreserved', status_code=204)
 
 
-@app.get('/stock/reservedItem/getAll')
+@current_app.get('/stock/reservedItem/getAll')
 @permissions_required(12)
 def get_reserved_items():
     date_start = request.form['date_start'] if 'date_start' in request.form else ''
@@ -455,7 +447,7 @@ def get_reserved_items():
         return response(obj=[reserved_item.json() for reserved_item in reserved_items])
 
 
-@app.get('/stock/reservedItem/getAll/<int:eventId>')
+@current_app.get('/stock/reservedItem/getAll/<int:eventId>')
 @permissions_required(12)
 def get_reserved_items_event(eventId):
     reserved_items = Reserved_item.query.filter_by(event_id=eventId).all()
