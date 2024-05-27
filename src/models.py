@@ -33,7 +33,7 @@ class Roles(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
     label = db.Column(db.String(20), nullable=False)
 
-    def to_dict(self):
+    def json(self):
         return {
             "id": self.id,
             "label": self.label
@@ -49,10 +49,10 @@ class User_role(db.Model):
     r_user = db.relationship(Users, backref="users_role")
     r_role = db.relationship(Roles, backref="role")
 
-    def to_dict(self):
+    def json(self):
         return {
-            "user": self.r_user.to_dict(),
-            "role": self.r_role.to_dict()
+            "user": self.r_user.json(),
+            "role": self.r_role.json()
         }
 
 
@@ -75,10 +75,9 @@ class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     category_id = db.Column(db.String(50), db.ForeignKey("category.id"), nullable=False)
-    gain = db.Column(db.Integer, nullable = False)
+    gain = db.Column(db.Integer, nullable=False)
 
     r_category = db.relationship(Category, backref="category", cascade="save-update")
-
 
     def json(self):
         return {
@@ -96,11 +95,12 @@ class Location(db.Model):
     address = db.Column(db.String(100), nullable=False)
     city = db.Column(db.String(100), nullable=False)
     room = db.Column(db.String(10), nullable=True)
+
     def json(self):
         return {"id": self.id,
                 "address": self.address,
                 "city": self.city,
-                "room": self.room} 
+                "room": self.room}
 
 
 class Item_location(db.Model):
@@ -120,7 +120,7 @@ class Item_location(db.Model):
             'item_id': self.r_item.json(),
             'location_id': self.r_location.json(),
             'quantity': self.quantity
-        }    
+        }
 
 
 class Event_status(db.Model):
@@ -128,6 +128,7 @@ class Event_status(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     label = db.Column(db.String(30), nullable=False)
+
     def json(self):
         return {
             'id': self.id,
@@ -141,6 +142,7 @@ class Person(db.Model):
     id = db.Column(db.UUID, primary_key=True, unique=True, nullable=False, default=uuid.uuid4)
     first_name = db.Column(db.String(50))
     last_name = db.Column(db.String(50))
+
     def json(self):
         return {
             'id': self.id,
@@ -156,8 +158,8 @@ class Event(db.Model):
     name = db.Column(db.String(265), nullable=False)
     stand_size = db.Column(db.Integer, nullable=True)
     contact_objective = db.Column(db.Integer, nullable=False, default=100)
-    date_start = db.Column(db.DateTime(timezone = True), nullable=False)
-    date_end = db.Column(db.DateTime(timezone = True), nullable=False)
+    date_start = db.Column(db.DateTime(timezone=True), nullable=False)
+    date_end = db.Column(db.DateTime(timezone=True), nullable=False)
     status_id = db.Column(db.Integer, db.ForeignKey('event_status.id'))
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
     item_manager = db.Column(db.UUID, db.ForeignKey('person.id'))
@@ -179,22 +181,23 @@ class Event(db.Model):
             'item_manager': self.r_item_manager.json()
         }
 
+
 class Reserved_item(db.Model):
     __tablename__ = "reserved_item"
 
-    event_id = db.Column(db.Integer, db.ForeignKey('event.id'), primary_key = True)
-    item_location_id = db.Column(db.Integer, db.ForeignKey('item_location.id'), primary_key=  True)
+    event_id = db.Column(db.Integer, db.ForeignKey('event.id'), primary_key=True)
+    item_location_id = db.Column(db.Integer, db.ForeignKey('item_location.id'), primary_key=True)
     status = db.Column(db.Boolean, nullable=False, default=False)
     quantity = db.Column(db.Integer, nullable=False)
     quantity_ret = db.Column(db.Integer, nullable=True)
-    reserved_on = db.Column(db.DateTime(timezone = True), nullable=False,
+    reserved_on = db.Column(db.DateTime(timezone=True), nullable=False,
                             server_default=db.func.now().op('AT TIME ZONE')(text("'Europe/Paris'")))
     reserved_by = db.Column(db.UUID, db.ForeignKey('users.id'))
 
     r_users = db.relationship(Users, backref='reserved_users', cascade="save-update")
     r_event = db.relationship(Event, backref="reserved_event", cascade="save-update")
     r_item_location = db.relationship(Item_location, backref="reserved_item_location", cascade="save-update")
-    
+
     def json(self):
         return {
             "event_id": self.r_event.json(),
@@ -224,7 +227,8 @@ class Role_permissions(db.Model):
     __tablename__ = "role_permission"
 
     role_id = db.Column(db.Integer, db.ForeignKey('role.id', onupdate='CASCADE', ondelete='CASCADE'), primary_key=True)
-    permission_id = db.Column(db.Integer, db.ForeignKey('permission.id', onupdate='CASCADE', ondelete='CASCADE'), primary_key=True)
+    permission_id = db.Column(db.Integer, db.ForeignKey('permission.id', onupdate='CASCADE', ondelete='CASCADE'),
+                              primary_key=True)
 
     r_role = db.relationship(Roles, backref="role_permissions")
     r_permission = db.relationship(Permissions, backref="permission")
@@ -237,6 +241,4 @@ class Role_permissions(db.Model):
 
 
 def empty(str):
-    if str=="" or str.isspace():
-        return 1
-    return 0
+    return str == "" or str.isspace()
