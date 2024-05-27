@@ -1,8 +1,9 @@
 import uuid
-from stock.database import get_db
+from database import get_db
 from sqlalchemy.sql.expression import func, text
 
 db = get_db()
+
 
 class Users(db.Model):
     __tablename__ = "users"
@@ -22,8 +23,36 @@ class Users(db.Model):
             'mail': self.mail,
             'nom': self.nom,
             'prenom': self.prenom,
-            'is_active': self.is_active,
-            'is_admin': self.is_authenticated
+            'is_active': self.is_active
+        }
+
+
+class Roles(db.Model):
+    __tablename__ = "role"
+
+    id = db.Column(db.Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
+    label = db.Column(db.String(20), nullable=False)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "label": self.label
+        }
+
+
+class User_role(db.Model):
+    __tablename__ = "user_role"
+
+    user_id = db.Column(db.UUID, db.ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE'), primary_key=True)
+    role_id = db.Column(db.Integer, db.ForeignKey('role.id', onupdate='CASCADE', ondelete='CASCADE'), primary_key=True)
+
+    r_user = db.relationship(Users, backref="users_role")
+    r_role = db.relationship(Roles, backref="role")
+
+    def to_dict(self):
+        return {
+            "user": self.r_user.to_dict(),
+            "role": self.r_role.to_dict()
         }
 
 
@@ -176,6 +205,36 @@ class Reserved_item(db.Model):
             "reserved_on": self.reserved_on,
             "reserved_by": self.r_users.json(),
         }
+
+
+class Permissions(db.Model):
+    __tablename__ = "permission"
+
+    id = db.Column(db.Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
+    label = db.Column(db.String(20), nullable=False, unique=True)
+
+    def json(self):
+        return {
+            "id": self.id,
+            "label": self.label
+        }
+
+
+class Role_permissions(db.Model):
+    __tablename__ = "role_permission"
+
+    role_id = db.Column(db.Integer, db.ForeignKey('role.id', onupdate='CASCADE', ondelete='CASCADE'), primary_key=True)
+    permission_id = db.Column(db.Integer, db.ForeignKey('permission.id', onupdate='CASCADE', ondelete='CASCADE'), primary_key=True)
+
+    r_role = db.relationship(Roles, backref="role_permissions")
+    r_permission = db.relationship(Permissions, backref="permission")
+
+    def json(self):
+        return {
+            "role": self.r_role.json(),
+            "permission": self.r_permission.json()
+        }
+
 
 def empty(str):
     if str=="" or str.isspace():
