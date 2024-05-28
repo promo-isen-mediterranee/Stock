@@ -1,5 +1,4 @@
 import uuid
-
 from flask import current_app
 from sqlalchemy.sql.expression import func, text
 

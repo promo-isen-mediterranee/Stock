@@ -30,7 +30,6 @@ def create_app() -> Flask:
     db = SQLAlchemy(app)
     CORS(app, supports_credentials=True)
     LoginManager(app)
-    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 
     try:
         makedirs(app.instance_path)
