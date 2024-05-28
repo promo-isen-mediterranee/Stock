@@ -228,6 +228,8 @@ def update_item(itemId, locationId):
     label = request_form['category']
     locationId = request_form['location.id']
 
+    nb_to_order =request_form['nb_to_order'] if 'nb_to_order' in request_form else 0
+
     if empty(name) or quantity <= 0 or empty(label):
         abort(400)
 
@@ -245,6 +247,7 @@ def update_item(itemId, locationId):
     if not item or not item_location:
         abort(404)
     item.name = name
+    item.nb_to_order = nb_to_order
     item.category_id = category_id
     item_location.quantity = quantity
     item_location.location_id = locationId

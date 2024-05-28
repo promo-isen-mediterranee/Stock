@@ -111,6 +111,7 @@ class Item_location(db.Model):
     item_id = db.Column(db.Integer, db.ForeignKey('item.id'))
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
     quantity = db.Column(db.Integer, nullable=False)
+    nb_to_order = db.Column(db.Integer, nullable=False, default = 0)
 
     r_item = db.relationship(Item, backref="item", cascade="save-update, delete")
     r_location = db.relationship('Location', backref="item_location", cascade="save-update")
@@ -120,7 +121,8 @@ class Item_location(db.Model):
             'id': self.id,
             'item_id': self.r_item.json(),
             'location_id': self.r_location.json(),
-            'quantity': self.quantity
+            'quantity': self.quantity,
+            'nb_to_order': self.nb_to_order
         }
 
 
