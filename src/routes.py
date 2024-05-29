@@ -367,7 +367,7 @@ def reserve_item():
     status = bool(request_form['status']) if 'status' in request_form else False
     reserved_on = func.now().op('AT TIME ZONE')(text("'Europe/Paris'"))
     reserved_by = None
-    if current_user:
+    if current_user and current_user.is_authenticated:
         reserved_by = current_user.id
 
     check = Reserved_item.query.filter_by(event_id=event_id, item_location_id=item_location_id).first()
