@@ -208,7 +208,7 @@ class Reserved_item(db.Model):
             "quantity": self.quantity,
             "quantity_ret": self.quantity_ret,
             "reserved_on": self.reserved_on,
-            "reserved_by": self.r_users.json(),
+            "reserved_by": self.r_users.json() if self.r_users is not None else None,
         }
 
 
