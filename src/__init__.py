@@ -3,14 +3,16 @@ Module name: Stock
 Authors: IMS Promo Dev Team <imspromo@yncrea.fr>
 """
 __version__ = "1.0.0"
-import logging
+
+import signal
 import sys
 from os import environ, makedirs
+
 from flask import Flask
+from flask_cors import CORS
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.middleware.proxy_fix import ProxyFix
-from flask_cors import CORS
 
 
 def init_app_config(app: Flask) -> None:
@@ -44,6 +46,9 @@ def create_app() -> Flask:
 
 
 app = create_app()
+
+signal.signal(signal.SIGTERM, lambda x, y: sys.exit(0))
+
 
 if __name__ == "__main__":
     app.run()
