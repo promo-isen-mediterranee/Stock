@@ -352,19 +352,19 @@ def delete_location(locationId):
 def reserve_item():
     request_form = request.form
     event_id = request_form["eventId"]
-    event = Event.query.filter_by(id=event_id).first()
-
     item_location_id = request_form['item_locationId']
+
+    event = Event.query.filter_by(id=event_id).first()
     item_location = Item_location.query.filter_by(id=item_location_id).first()
 
     if not item_location or not event:
         abort(404)
 
     quantity = request_form['quantity']
-
-    if empty(event_id) or empty(item_location_id) or empty(quantity):
+    if empty(quantity):
         abort(400)
-    status = bool(request_form['status']) if 'status' in request_form else False
+
+    status = request_form.get('status', False, bool)
     reserved_on = func.now().op('AT TIME ZONE')(text("'Europe/Paris'"))
     reserved_by = None
     if current_user and current_user.is_authenticated:
