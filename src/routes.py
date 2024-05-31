@@ -33,7 +33,7 @@ def permissions_required(*permissions):
             if bypass_token == environ.get("BYPASS_TOKEN"):
                 return fn(*args, **kwargs)
 
-            if not current_user and not current_user.is_authenticated:
+            if not current_user.is_authenticated:
                 return login_manager.unauthorized()
 
             if not permissions:
