@@ -33,7 +33,9 @@ def permissions_required(*permissions):
             if bypass_token == environ.get("BYPASS_TOKEN"):
                 return fn(*args, **kwargs)
 
-            if not current_user.is_authenticated:
+            if not current_user and not current_user.is_authenticated:
+                print("UNAUTHORIZED IN PERM")
+                logger.exception("UNAUTHORIZED IN PERM")
                 return login_manager.unauthorized()
 
             if not permissions:
@@ -73,6 +75,8 @@ def bad_request(e):
 
 @current_app.errorhandler(401)
 def unauthorized(e):
+    print(e)
+    logger.exception(e)
     return response(message=e, status_code=401)
     # return response(message='Non autorisé', status_code=401)
 
