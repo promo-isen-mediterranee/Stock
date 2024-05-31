@@ -73,7 +73,8 @@ def bad_request(e):
 
 @current_app.errorhandler(401)
 def unauthorized(e):
-    return response(message='Non autorisé', status_code=401)
+    return response(message=e, status_code=401)
+    # return response(message='Non autorisé', status_code=401)
 
 
 @current_app.errorhandler(403)
