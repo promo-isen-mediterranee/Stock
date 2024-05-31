@@ -22,6 +22,11 @@ def init_app_config(app: Flask) -> None:
 
     app.secret_key = environ.get('SECRET_KEY')
 
+    app.config["SESSION_COOKIE_HTTPONLY"] = environ.get("SESSION_COOKIE_HTTPONLY")
+    app.config["SESSION_COOKIE_SAMESITE"] = environ.get("SESSION_COOKIE_SAMESITE")
+    app.config["SESSION_COOKIE_DOMAIN"] = environ.get("SESSION_COOKIE_DOMAIN")
+
+
 
 def create_app() -> Flask:
     app = Flask(__name__, instance_relative_config=True)

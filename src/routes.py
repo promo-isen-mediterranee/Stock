@@ -55,12 +55,6 @@ def permissions_required(*permissions):
     return wrapper
 
 
-@current_app.before_request
-def make_session_permanent():
-    session.permanent = True
-    current_app.permanent_session_lifetime = timedelta(seconds=float(environ.get('SESSION_DURATION_SECONDS')))
-
-
 @login_manager.user_loader
 def user_loader(userId):
     return Users.query.get(userId)
